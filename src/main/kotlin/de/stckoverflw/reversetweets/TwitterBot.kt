@@ -12,6 +12,8 @@ import io.ktor.client.request.*
 import io.ktor.client.statement.*
 import io.ktor.http.*
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlinx.serialization.json.add
 import kotlinx.serialization.json.buildJsonObject
@@ -62,14 +64,16 @@ object TwitterBot {
 
         twitter.startFilteredStream {
             println("${it.text} by ${twitter.getUserFromUserId(it.authorId).name}")
-            val splittedText = it.text.split(' ')
-            val textWithOutMentions = StringBuilder()
-            splittedText.forEach { current ->
-                if (!current.startsWith('@')) {
-                    textWithOutMentions.append("$current ")
+            GlobalScope.launch {
+                val splittedText = it.text.split(' ')
+                val textWithOutMentions = StringBuilder()
+                splittedText.forEach { current ->
+                    if (!current.startsWith('@')) {
+                        textWithOutMentions.append("$current ")
+                    }
                 }
+                twitter.postTweet(textWithOutMentions.reverse().toString(), it.id)
             }
-            twitter.postTweet(textWithOutMentions.reverse().toString(), it.id)
         }.await()
     }
 
