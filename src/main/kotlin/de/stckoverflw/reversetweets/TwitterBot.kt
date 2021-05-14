@@ -1,7 +1,10 @@
 package de.stckoverflw.reversetweets
 
 import com.github.redouane59.twitter.TwitterClient
+import com.github.redouane59.twitter.dto.collections.CollectionsResponse
 import com.github.redouane59.twitter.dto.stream.StreamRules
+import com.github.scribejava.core.model.Response
+import com.soywiz.klock.minutes
 import de.stckoverflw.reversetweets.config.Config
 import de.stckoverflw.reversetweets.twitter.credentials
 import io.ktor.client.*
@@ -11,10 +14,7 @@ import io.ktor.client.features.json.serializer.*
 import io.ktor.client.request.*
 import io.ktor.client.statement.*
 import io.ktor.http.*
-import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.suspendCancellableCoroutine
+import kotlinx.coroutines.*
 import kotlinx.serialization.json.add
 import kotlinx.serialization.json.buildJsonObject
 import kotlinx.serialization.json.putJsonArray
@@ -22,6 +22,7 @@ import kotlinx.serialization.json.putJsonObject
 import java.util.concurrent.ForkJoinPool
 import java.util.concurrent.Future
 import kotlin.coroutines.resumeWithException
+import kotlin.time.minutes
 
 object TwitterBot {
     private lateinit var twitter: TwitterClient
@@ -95,21 +96,24 @@ object TwitterBot {
     }
 
     suspend fun startStream() {
-        println("Starting new Stream")
-        twitter.startFilteredStream {
-            println("${it.text} by ${twitter.getUserFromUserId(it.authorId).name}")
-            GlobalScope.launch {
-                val splittedText = it.text.split(' ')
-                val textWithOutMentions = StringBuilder()
-                splittedText.forEach { current ->
-                    if (!current.startsWith('@') && !current.startsWith("https://")) {
-                        textWithOutMentions.append("$current ")
+        GlobalScope.async {
+            println("Starting new Stream")
+            twitter.startFilteredStream {
+                println("${it.text} by ${twitter.getUserFromUserId(it.authorId).name}")
+                GlobalScope.launch {
+                    val splittedText = it.text.split(' ')
+                    val textWithOutMentions = StringBuilder()
+                    splittedText.forEach { current ->
+                        if (!current.startsWith('@') && !current.startsWith("https://")) {
+                            textWithOutMentions.append("$current ")
+                        }
                     }
+                    twitter.postTweet(textWithOutMentions.reverse().toString(), it.id)
                 }
-                twitter.postTweet(textWithOutMentions.reverse().toString(), it.id)
-                startStream()
-            }
-        }.await()
+            }.await()
+        }
+        delay(60 * 1000)
+        startStream()
     }
 }
 
