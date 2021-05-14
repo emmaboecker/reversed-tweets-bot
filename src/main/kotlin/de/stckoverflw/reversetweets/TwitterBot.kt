@@ -89,12 +89,13 @@ object TwitterBot {
         }
 
         println("Updated rules")
-        println("Starting stream")
+        println("Starting 1st stream")
 
         startStream()
     }
 
     suspend fun startStream() {
+        println("Starting new Stream")
         twitter.startFilteredStream {
             println("${it.text} by ${twitter.getUserFromUserId(it.authorId).name}")
             GlobalScope.launch {
