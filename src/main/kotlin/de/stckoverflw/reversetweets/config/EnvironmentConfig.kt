@@ -15,19 +15,6 @@ fun getEnv(
     EnvironmentVariable(prefix, { it }, default)
 
 /**
- * Returns a delegated environment variable prefixed by [prefix]
- * that fallbacks to [default] if the found variable is empty or invalid.
- *
- * The variable is transformed to [T] by [transform]
- */
-fun <T> getEnv(
-    prefix: String? = null,
-    default: T? = null,
-    transform: (String) -> T?
-): EnvironmentVariable<T> =
-    EnvironmentVariable(prefix, transform, default)
-
-/**
  * Delegated property for a environment variable.
  *
  * @param prefix the prefix for the variable
