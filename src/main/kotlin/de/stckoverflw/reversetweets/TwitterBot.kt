@@ -89,7 +89,12 @@ object TwitterBot {
         }
 
         println("Updated rules")
+        println("Starting stream")
 
+        startStream()
+    }
+
+    suspend fun startStream() {
         twitter.startFilteredStream {
             println("${it.text} by ${twitter.getUserFromUserId(it.authorId).name}")
             GlobalScope.launch {
@@ -101,10 +106,10 @@ object TwitterBot {
                     }
                 }
                 twitter.postTweet(textWithOutMentions.reverse().toString(), it.id)
+                startStream()
             }
         }.await()
     }
-
 }
 
 @OptIn(ExperimentalCoroutinesApi::class)
