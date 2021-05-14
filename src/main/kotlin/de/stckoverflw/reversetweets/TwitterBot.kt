@@ -63,14 +63,16 @@ object TwitterBot {
             }
         }
 
-        client.post<HttpResponse>("https://api.twitter.com/2/tweets/search/stream/rules") {
-            header(HttpHeaders.Authorization, "Bearer ${Config.TWITTER_BEARER_TOKEN}")
-            header(HttpHeaders.ContentType, ContentType.Application.Json)
-            body = buildJsonObject {
-                putJsonObject("delete") {
-                    putJsonArray("ids") {
-                        rules?.forEach {
-                            add(it.id)
+        if (!rules.isNullOrEmpty()) {
+            client.post<HttpResponse>("https://api.twitter.com/2/tweets/search/stream/rules") {
+                header(HttpHeaders.Authorization, "Bearer ${Config.TWITTER_BEARER_TOKEN}")
+                header(HttpHeaders.ContentType, ContentType.Application.Json)
+                body = buildJsonObject {
+                    putJsonObject("delete") {
+                        putJsonArray("ids") {
+                            rules.forEach {
+                                add(it.id)
+                            }
                         }
                     }
                 }
