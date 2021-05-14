@@ -99,7 +99,7 @@ object TwitterBot {
         startStream()
     }
 
-    suspend fun startStream() {
+    private suspend fun startStream() {
         GlobalScope.async {
             println("Starting new Stream")
             twitter.startFilteredStream {
