@@ -96,7 +96,7 @@ object TwitterBot {
                 val splittedText = it.text.split(' ')
                 val textWithOutMentions = StringBuilder()
                 splittedText.forEach { current ->
-                    if (!current.startsWith('@')) {
+                    if (!current.startsWith('@') && !current.startsWith("https://")) {
                         textWithOutMentions.append("$current ")
                     }
                 }
