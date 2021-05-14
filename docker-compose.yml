@@ -2,7 +2,7 @@ version: "3.1"
 
 services:
   bot:
-    container_name: redirect
+    container_name: reversed-tweets
     image: docker.pkg.github.com/stckoverflw/reversed-tweets-bot/twitter-bot:1.0.0
     volumes:
       - "/etc/timezone:/etc/timezone:ro"
