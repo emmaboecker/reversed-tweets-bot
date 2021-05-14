@@ -45,7 +45,10 @@ object TwitterBot {
         "Dream",
         "WilburSoot",
         "Ranboosaysstuff",
-        "ranaltboo"
+        "ranaltboo",
+        "honkkarl",
+        "Nihaachu",
+        "StckOverflw"
     )
 
     suspend operator fun invoke() {
