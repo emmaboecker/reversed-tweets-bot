@@ -43,7 +43,9 @@ object TwitterBot {
         "sapnap",
         "GeorgeNotFound",
         "Dream",
-        "WilburSoot"
+        "WilburSoot",
+        "Ranboosaysstuff",
+        "ranaltboo"
     )
 
     suspend operator fun invoke() {
