@@ -26,6 +26,26 @@ import kotlin.coroutines.resumeWithException
 object TwitterBot {
     private lateinit var twitter: TwitterClient
 
+    /**
+     * Here are the users you want the bot to reply to
+     */
+    private val users = listOf(
+        "tommyinnit",
+        "tommyaltinnit",
+        "TubboLive",
+        "TubboTWO",
+        "JackManifoldTV",
+        "JackManifoldTwo",
+        "quackity",
+        "dreamwastaken",
+        "KarlJacobs_",
+        "GeorgeNootFound",
+        "sapnap",
+        "GeorgeNotFound",
+        "Dream",
+        "WilburSoot"
+    )
+
     suspend operator fun invoke() {
         twitter = TwitterClient(credentials {
             apiKey = Config.TWITTER_API_KEY
@@ -33,7 +53,6 @@ object TwitterBot {
             accessToken = Config.TWITTER_ACCESS_TOKEN
             accessTokenSecret = Config.TWITTER_ACCESS_SECRET
         })
-        println("Started")
 
         val rules: List<StreamRules.StreamRule>? = twitter.retrieveFilteredStreamRules()
         println("Found ${rules?.count() ?: 0} rules!")
@@ -52,15 +71,17 @@ object TwitterBot {
                     putJsonArray("ids") {
                         rules?.forEach {
                             add(it.id)
-                            println("Removed rule: " + it.tag)
                         }
                     }
                 }
             }
         }
 
-        twitter.addFilteredStreamRule("from:l4zs1", "l4zs's tweets")
-        println("Added rules")
+        users.forEach {
+            twitter.addFilteredStreamRule("from:$it", "$it's tweets")
+        }
+
+        println("Updated rules")
 
         twitter.startFilteredStream {
             println("${it.text} by ${twitter.getUserFromUserId(it.authorId).name}")
