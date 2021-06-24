@@ -3,6 +3,8 @@ package de.stckoverflw.reversetweets
 import com.github.redouane59.twitter.TwitterClient
 import com.github.redouane59.twitter.dto.collections.CollectionsResponse
 import com.github.redouane59.twitter.dto.stream.StreamRules
+import com.github.redouane59.twitter.dto.tweet.ReplySettings
+import com.github.redouane59.twitter.dto.tweet.TweetType
 import com.github.scribejava.core.model.Response
 import com.soywiz.klock.minutes
 import de.stckoverflw.reversetweets.config.Config
@@ -46,14 +48,23 @@ object TwitterBot {
         "Dream",
         "WilburSoot",
         "Ranboosaysstuff",
-        "ranaltboo",
-        "honkkarl",
         "Nihaachu",
-        "Cyberonix",
-        "DerBanko",
-        "badlinu",
         "Ph1LzA",
-        "Punztw"
+        "Punztw",
+        "v2rook"
+    )
+
+    /**
+     *  List of users that can delete tweets by replying to it
+     */
+    private val deleteUser = listOf(
+        "ReversingT",
+        "tycmdesrever_",
+        "revrsemcythate",
+        "Reversed_McYt",
+        "l4zs1",
+        "AmelieHuhChamp",
+        "StckOverflw"
     )
 
     suspend operator fun invoke() {
@@ -92,8 +103,8 @@ object TwitterBot {
         users.forEach {
             twitter.addFilteredStreamRule("from:$it", "$it's tweets")
         }
-
-        println("Updated rules")
+        println("Added ${users.size} user to reply to")
+        twitter.addFilteredStreamRule("to:ReversedMcYt", "replies")
         println("Starting 1st stream")
 
         startStream()
@@ -103,16 +114,32 @@ object TwitterBot {
         GlobalScope.async {
             println("Starting new Stream")
             twitter.startFilteredStream {
-                println("${it.text} by ${twitter.getUserFromUserId(it.authorId).name}")
-                GlobalScope.launch {
-                    val splittedText = it.text.split(' ')
-                    val textWithOutMentions = StringBuilder()
-                    splittedText.forEach { current ->
-                        if (!current.startsWith('@') && !current.startsWith("https://")) {
-                            textWithOutMentions.append("$current ")
+                if (deleteUser.contains(twitter.getUserFromUserId(it.authorId).name)) {
+                    if (it.tweetType == TweetType.REPLIED_TO) {
+                        if (it.text.toLowerCase().contains("delete")) {
+                            if (twitter.getUserFromUserName("ReversedMcYt").id.equals(it.inReplyToUserId)) {
+                                println("Delete Tweet:")
+                                println(twitter.getTweet(it.inReplyToStatusId).text)
+                                println("Because ${it.user.name} replied:")
+                                println(it.text)
+                                twitter.deleteTweet(it.inReplyToStatusId)
+                            }
                         }
                     }
-                    twitter.postTweet(textWithOutMentions.reverse().toString(), it.id)
+                } else {
+                    if (it.tweetType != TweetType.RETWEETED) {
+                        println("${it.text} by ${twitter.getUserFromUserId(it.authorId).name}")
+                        GlobalScope.launch {
+                            val splittedText = it.text.split(' ')
+                            var textWithOutMentions = ""
+                            splittedText.forEach { text ->
+                                if (!text.startsWith("@")) {
+                                    textWithOutMentions = textWithOutMentions.plus("$text ")
+                                }
+                            }
+                            twitter.postTweet(textWithOutMentions.reversed(), it.id)
+                        }
+                    }
                 }
             }.await()
         }
