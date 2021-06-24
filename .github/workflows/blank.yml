@@ -1,0 +1,25 @@
+name: Deploy
+
+on:
+  push:
+    branches: [ master ]
+
+  workflow_dispatch:
+  
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    if: "!contains(github.event.commits[0].message, '[skip ci]')"
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Login
+        env:
+          GITHUB_TOKEN: ${{ secrets.TOKEN }}
+        run:  docker login docker.pkg.github.com --username phanatic --password "$GITHUB_TOKEN"
+      - name: Build & Tag
+        run:  docker build -t docker.pkg.github.com/stckoverflw/reversed-tweets-bot/twitter-bot:latest -t docker.pkg.github.com/stckoverflw/reversed-tweets-bot/twitter-bot:"$GITHUB_SHA" .
+      - name: Push
+        run:  docker push docker.pkg.github.com/stckoverflw/reversed-tweets-bot/twitter-bot:latest
+      - name: Push specific tag
+        run: docker push docker.pkg.github.com/stckoverflw/reversed-tweets-bot/twitter-bot:"$GITHUB_SHA"
