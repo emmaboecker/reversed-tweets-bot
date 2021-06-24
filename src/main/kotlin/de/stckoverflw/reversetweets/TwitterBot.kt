@@ -1,12 +1,8 @@
 package de.stckoverflw.reversetweets
 
 import com.github.redouane59.twitter.TwitterClient
-import com.github.redouane59.twitter.dto.collections.CollectionsResponse
 import com.github.redouane59.twitter.dto.stream.StreamRules
-import com.github.redouane59.twitter.dto.tweet.ReplySettings
 import com.github.redouane59.twitter.dto.tweet.TweetType
-import com.github.scribejava.core.model.Response
-import com.soywiz.klock.minutes
 import de.stckoverflw.reversetweets.config.Config
 import de.stckoverflw.reversetweets.twitter.credentials
 import io.ktor.client.*
@@ -24,7 +20,6 @@ import kotlinx.serialization.json.putJsonObject
 import java.util.concurrent.ForkJoinPool
 import java.util.concurrent.Future
 import kotlin.coroutines.resumeWithException
-import kotlin.time.minutes
 
 object TwitterBot {
     private lateinit var twitter: TwitterClient
