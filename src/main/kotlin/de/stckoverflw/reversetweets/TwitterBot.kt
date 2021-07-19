@@ -5,6 +5,8 @@ import io.github.redouane59.twitter.dto.stream.StreamRules
 import io.github.redouane59.twitter.dto.tweet.TweetType
 import de.stckoverflw.reversetweets.config.Config
 import de.stckoverflw.reversetweets.twitter.credentials
+import de.stckoverflw.reversetweets.twitter.getFlippedImages
+import de.stckoverflw.reversetweets.twitter.getMediaIds
 import io.ktor.client.*
 import io.ktor.client.engine.okhttp.*
 import io.ktor.client.features.json.*
@@ -22,30 +24,15 @@ import java.util.concurrent.Future
 import kotlin.coroutines.resumeWithException
 
 object TwitterBot {
-    private lateinit var twitter: TwitterClient
+    lateinit var twitter: TwitterClient
+
+    lateinit var client: HttpClient
 
     /**
      * Here are the users you want the bot to reply to
      */
     private val users = listOf(
-        "tommyinnit",
-        "tommyaltinnit",
-        "TubboLive",
-        "TubboTWO",
-        "JackManifoldTV",
-        "JackManifoldTwo",
-        "quackity",
-        "dreamwastaken",
-        "KarlJacobs_",
-        "GeorgeNootFound",
-        "sapnap",
-        "GeorgeNotFound",
-        "Dream",
-        "WilburSoot",
-        "Ranboosaysstuff",
-        "Nihaachu",
-        "Ph1LzA",
-        "Punztw"
+        "StckOverflw"
     )
 
     /**
@@ -57,8 +44,7 @@ object TwitterBot {
         "revrsemcythate",
         "Reversed_McYt",
         "l4zs1",
-        "AmelieHuhChamp",
-        "StckOverflw"
+        "AmelieHuhChamp"
     )
 
     suspend operator fun invoke() {
@@ -72,7 +58,7 @@ object TwitterBot {
         val rules: List<StreamRules.StreamRule>? = twitter.retrieveFilteredStreamRules()
         println("Found ${rules?.count() ?: 0} rules!")
 
-        val client = HttpClient(OkHttp) {
+        client = HttpClient(OkHttp) {
             install(JsonFeature) {
                 serializer = KotlinxSerializer()
             }
@@ -127,11 +113,12 @@ object TwitterBot {
                             val splittedText = it.text.split(' ')
                             var cleanText = ""
                             splittedText.forEach { text ->
-                                if ((!text.startsWith("@")) || (!text.startsWith("http"))) {
+                                if ((!text.startsWith("@")) && (!text.startsWith("http"))) {
                                     cleanText = cleanText.plus("$text ")
                                 }
                             }
-                            val mediaIds = ArrayList<String>()
+                            val mediaUrls = getFlippedImages(it.id)
+                            val mediaIds = getMediaIds(mediaUrls)
 
                             if (mediaIds.isNotEmpty()) {
                                 twitter.postTweet(cleanText.reversed(), it.id, mediaIds.joinToString(","))

@@ -8,4 +8,5 @@ object Config {
     val TWITTER_ACCESS_TOKEN: String by getEnv()
     val TWITTER_ACCESS_SECRET: String by getEnv()
 
+    val IMAGINARY_URL: String by getEnv()
 }
