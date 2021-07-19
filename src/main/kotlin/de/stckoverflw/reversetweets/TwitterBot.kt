@@ -5,6 +5,8 @@ import io.github.redouane59.twitter.dto.stream.StreamRules
 import io.github.redouane59.twitter.dto.tweet.TweetType
 import de.stckoverflw.reversetweets.config.Config
 import de.stckoverflw.reversetweets.twitter.credentials
+import de.stckoverflw.reversetweets.twitter.getFlippedImages
+import de.stckoverflw.reversetweets.twitter.getMediaIds
 import io.ktor.client.*
 import io.ktor.client.engine.okhttp.*
 import io.ktor.client.features.json.*
@@ -22,7 +24,9 @@ import java.util.concurrent.Future
 import kotlin.coroutines.resumeWithException
 
 object TwitterBot {
-    private lateinit var twitter: TwitterClient
+    lateinit var twitter: TwitterClient
+
+    lateinit var client: HttpClient
 
     /**
      * Here are the users you want the bot to reply to
@@ -72,7 +76,7 @@ object TwitterBot {
         val rules: List<StreamRules.StreamRule>? = twitter.retrieveFilteredStreamRules()
         println("Found ${rules?.count() ?: 0} rules!")
 
-        val client = HttpClient(OkHttp) {
+        client = HttpClient(OkHttp) {
             install(JsonFeature) {
                 serializer = KotlinxSerializer()
             }
@@ -125,14 +129,19 @@ object TwitterBot {
                         println("${it.text} by ${twitter.getUserFromUserId(it.authorId).name}")
                         GlobalScope.launch {
                             val splittedText = it.text.split(' ')
-                            var textWithOutMentions = ""
+                            var cleanText = ""
                             splittedText.forEach { text ->
-                                if (!text.startsWith("@")) {
-                                    textWithOutMentions = textWithOutMentions.plus("$text ")
+                                if ((!text.startsWith("@")) && (!text.startsWith("http"))) {
+                                    cleanText = cleanText.plus("$text ")
                                 }
-
                             }
-                            twitter.postTweet(textWithOutMentions.reversed(), it.id)
+                            if (it.attachments.mediaKeys.isNotEmpty()) {
+                                val mediaUrls = getFlippedImages(it.id)
+                                val mediaIds = getMediaIds(mediaUrls)
+                                twitter.postTweet(cleanText.reversed(), it.id, mediaIds.joinToString(","))
+                            } else {
+                                twitter.postTweet(cleanText.reversed(), it.id)
+                            }
                         }
                     }
                 }
