@@ -117,10 +117,9 @@ object TwitterBot {
                                     cleanText = cleanText.plus("$text ")
                                 }
                             }
-                            val mediaUrls = getFlippedImages(it.id)
-                            val mediaIds = getMediaIds(mediaUrls)
-
-                            if (mediaIds.isNotEmpty()) {
+                            if (it.attachments.mediaKeys.isNotEmpty()) {
+                                val mediaUrls = getFlippedImages(it.id)
+                                val mediaIds = getMediaIds(mediaUrls)
                                 twitter.postTweet(cleanText.reversed(), it.id, mediaIds.joinToString(","))
                             } else {
                                 twitter.postTweet(cleanText.reversed(), it.id)
