@@ -125,14 +125,19 @@ object TwitterBot {
                         println("${it.text} by ${twitter.getUserFromUserId(it.authorId).name}")
                         GlobalScope.launch {
                             val splittedText = it.text.split(' ')
-                            var textWithOutMentions = ""
+                            var cleanText = ""
                             splittedText.forEach { text ->
-                                if (!text.startsWith("@")) {
-                                    textWithOutMentions = textWithOutMentions.plus("$text ")
+                                if ((!text.startsWith("@")) || (!text.startsWith("http"))) {
+                                    cleanText = cleanText.plus("$text ")
                                 }
-
                             }
-                            twitter.postTweet(textWithOutMentions.reversed(), it.id)
+                            val mediaIds = ArrayList<String>()
+
+                            if (mediaIds.isNotEmpty()) {
+                                twitter.postTweet(cleanText.reversed(), it.id, mediaIds.joinToString(","))
+                            } else {
+                                twitter.postTweet(cleanText.reversed(), it.id)
+                            }
                         }
                     }
                 }
