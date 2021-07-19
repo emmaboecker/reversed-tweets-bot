@@ -45,8 +45,7 @@ object TwitterBot {
         "Ranboosaysstuff",
         "Nihaachu",
         "Ph1LzA",
-        "Punztw",
-        "v2rook"
+        "Punztw"
     )
 
     /**
@@ -121,7 +120,7 @@ object TwitterBot {
                             }
                         }
                     }
-                } else {
+                } else if (users.contains(twitter.getUserFromUserId(it.authorId).name)) {
                     if (it.tweetType != TweetType.RETWEETED) {
                         println("${it.text} by ${twitter.getUserFromUserId(it.authorId).name}")
                         GlobalScope.launch {
