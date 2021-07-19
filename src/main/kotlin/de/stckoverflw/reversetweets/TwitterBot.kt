@@ -32,7 +32,24 @@ object TwitterBot {
      * Here are the users you want the bot to reply to
      */
     private val users = listOf(
-        "StckOverflw"
+        "tommyinnit",
+        "tommyaltinnit",
+        "TubboLive",
+        "TubboTWO",
+        "JackManifoldTV",
+        "JackManifoldTwo",
+        "quackity",
+        "dreamwastaken",
+        "KarlJacobs_",
+        "GeorgeNootFound",
+        "sapnap",
+        "GeorgeNotFound",
+        "Dream",
+        "WilburSoot",
+        "Ranboosaysstuff",
+        "Nihaachu",
+        "Ph1LzA",
+        "Punztw"
     )
 
     /**
@@ -44,7 +61,8 @@ object TwitterBot {
         "revrsemcythate",
         "Reversed_McYt",
         "l4zs1",
-        "AmelieHuhChamp"
+        "AmelieHuhChamp",
+        "StckOverflw"
     )
 
     suspend operator fun invoke() {
