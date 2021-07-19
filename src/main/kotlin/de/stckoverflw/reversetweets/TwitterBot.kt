@@ -1,8 +1,8 @@
 package de.stckoverflw.reversetweets
 
-import com.github.redouane59.twitter.TwitterClient
-import com.github.redouane59.twitter.dto.stream.StreamRules
-import com.github.redouane59.twitter.dto.tweet.TweetType
+import io.github.redouane59.twitter.TwitterClient
+import io.github.redouane59.twitter.dto.stream.StreamRules
+import io.github.redouane59.twitter.dto.tweet.TweetType
 import de.stckoverflw.reversetweets.config.Config
 import de.stckoverflw.reversetweets.twitter.credentials
 import io.ktor.client.*
@@ -111,7 +111,7 @@ object TwitterBot {
             twitter.startFilteredStream {
                 if (deleteUser.contains(twitter.getUserFromUserId(it.authorId).name)) {
                     if (it.tweetType == TweetType.REPLIED_TO) {
-                        if (it.text.toLowerCase().contains("delete")) {
+                        if (it.text.toLowerCase().contains("/delete")) {
                             if (twitter.getUserFromUserName("ReversedMcYt").id.equals(it.inReplyToUserId)) {
                                 println("Delete Tweet:")
                                 println(twitter.getTweet(it.inReplyToStatusId).text)
@@ -131,6 +131,7 @@ object TwitterBot {
                                 if (!text.startsWith("@")) {
                                     textWithOutMentions = textWithOutMentions.plus("$text ")
                                 }
+
                             }
                             twitter.postTweet(textWithOutMentions.reversed(), it.id)
                         }

@@ -1,12 +1,11 @@
 plugins {
-    kotlin("jvm") version "1.5.0"
-    kotlin("plugin.serialization") version "1.4.32"
+    kotlin("jvm") version "1.5.21"
+    kotlin("plugin.serialization") version "1.5.21"
     application
 }
 
 repositories {
     mavenCentral()
-    jcenter()
 }
 
 dependencies {
@@ -15,7 +14,7 @@ dependencies {
     implementation("io.ktor", "ktor-client-okhttp", "1.5.2")
     implementation("io.ktor", "ktor-client-serialization", "1.5.2")
 
-    implementation("com.github.redouane59.twitter", "twittered", "1.20")
+    implementation("io.github.redouane59.twitter", "twittered", "2.6")
 
     implementation("org.jetbrains.kotlinx", "kotlinx-datetime", "0.1.1")
 
