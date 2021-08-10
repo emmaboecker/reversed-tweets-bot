@@ -6,11 +6,8 @@ import com.google.gson.JsonParser
 import de.stckoverflw.reversetweets.TwitterBot
 import de.stckoverflw.reversetweets.config.Config
 import io.github.redouane59.twitter.dto.tweet.MediaCategory
-import io.ktor.client.request.*
-import io.ktor.client.statement.*
 import java.io.File
 import java.net.URL
-import java.util.*
 import javax.imageio.ImageIO
 
 
@@ -23,13 +20,14 @@ fun getFlippedImages(tweetId: String): ArrayList<String> {
                     Pair("expansions", "attachments.media_keys"),
                     Pair("media.fields", "url")
                 ),
-                String::class.java).get()
+                String::class.java
+            ).get()
 
     val json = JsonParser.parseString(tweetJsonRaw)
 
     val flippedImages = ArrayList<String>()
 
-    println(tweetJsonRaw)
+//    println(tweetJsonRaw)
 
     if (json["includes"] !is JsonNull) {
         if (json["includes"]["media"] !is JsonNull) {

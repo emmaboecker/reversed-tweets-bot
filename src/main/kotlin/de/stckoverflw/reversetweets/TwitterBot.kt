@@ -1,12 +1,12 @@
 package de.stckoverflw.reversetweets
 
-import io.github.redouane59.twitter.TwitterClient
-import io.github.redouane59.twitter.dto.stream.StreamRules
-import io.github.redouane59.twitter.dto.tweet.TweetType
 import de.stckoverflw.reversetweets.config.Config
 import de.stckoverflw.reversetweets.twitter.credentials
 import de.stckoverflw.reversetweets.twitter.getFlippedImages
 import de.stckoverflw.reversetweets.twitter.getMediaIds
+import io.github.redouane59.twitter.TwitterClient
+import io.github.redouane59.twitter.dto.stream.StreamRules
+import io.github.redouane59.twitter.dto.tweet.TweetType
 import io.ktor.client.*
 import io.ktor.client.engine.okhttp.*
 import io.ktor.client.features.json.*
@@ -19,6 +19,7 @@ import kotlinx.serialization.json.add
 import kotlinx.serialization.json.buildJsonObject
 import kotlinx.serialization.json.putJsonArray
 import kotlinx.serialization.json.putJsonObject
+import java.util.*
 import java.util.concurrent.ForkJoinPool
 import java.util.concurrent.Future
 import kotlin.coroutines.resumeWithException
@@ -26,7 +27,7 @@ import kotlin.coroutines.resumeWithException
 object TwitterBot {
     lateinit var twitter: TwitterClient
 
-    lateinit var client: HttpClient
+    private lateinit var client: HttpClient
 
     /**
      * Here are the users you want the bot to reply to
@@ -109,12 +110,12 @@ object TwitterBot {
     }
 
     private suspend fun startStream() {
-        GlobalScope.async {
+        GlobalScope.launch {
             println("Starting new Stream")
             twitter.startFilteredStream {
                 if (deleteUser.contains(twitter.getUserFromUserId(it.authorId).name)) {
                     if (it.tweetType == TweetType.REPLIED_TO) {
-                        if (it.text.toLowerCase().contains("/delete")) {
+                        if (it.text.lowercase(Locale.ENGLISH).contains("/delete")) {
                             if (twitter.getUserFromUserName("ReversedMcYt").id.equals(it.inReplyToUserId)) {
                                 println("Delete Tweet:")
                                 println(twitter.getTweet(it.inReplyToStatusId).text)
@@ -147,7 +148,7 @@ object TwitterBot {
                 }
             }.await()
         }
-        delay(60 * 1000)
+        delay(60.times(1000).toLong())
         startStream()
     }
 }
