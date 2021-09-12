@@ -58,6 +58,7 @@ fun getMediaIds(imageUrls: ArrayList<String>): ArrayList<String> {
     images.forEach {
         val response = TwitterBot.twitter.uploadMedia(it, MediaCategory.TWEET_IMAGE)
         mediaIDs.add(response.mediaId)
+        it.delete()
     }
     return mediaIDs
 }

@@ -22,6 +22,8 @@ import kotlinx.serialization.json.putJsonObject
 import java.util.concurrent.ForkJoinPool
 import java.util.concurrent.Future
 import kotlin.coroutines.resumeWithException
+import kotlin.time.Duration
+import kotlin.time.ExperimentalTime
 
 object TwitterBot {
     lateinit var twitter: TwitterClient
@@ -49,7 +51,8 @@ object TwitterBot {
         "Ranboosaysstuff",
         "Nihaachu",
         "Ph1LzA",
-        "Punztw"
+        "Punztw",
+        "StckOverflw"
     )
 
     /**
@@ -62,7 +65,7 @@ object TwitterBot {
         "Reversed_McYt",
         "l4zs1",
         "AmelieHuhChamp",
-        "StckOverflw"
+
     )
 
     suspend operator fun invoke() {
@@ -108,46 +111,46 @@ object TwitterBot {
         startStream()
     }
 
+    @OptIn(ExperimentalTime::class)
     private suspend fun startStream() {
-        GlobalScope.async {
-            println("Starting new Stream")
-            twitter.startFilteredStream {
-                if (deleteUser.contains(twitter.getUserFromUserId(it.authorId).name)) {
-                    if (it.tweetType == TweetType.REPLIED_TO) {
-                        if (it.text.toLowerCase().contains("/delete")) {
-                            if (twitter.getUserFromUserName("ReversedMcYt").id.equals(it.inReplyToUserId)) {
-                                println("Delete Tweet:")
-                                println(twitter.getTweet(it.inReplyToStatusId).text)
-                                println("Because ${it.user.name} replied:")
-                                println(it.text)
-                                twitter.deleteTweet(it.inReplyToStatusId)
-                            }
-                        }
-                    }
-                } else if (users.contains(twitter.getUserFromUserId(it.authorId).name)) {
-                    if (it.tweetType != TweetType.RETWEETED) {
-                        println("${it.text} by ${twitter.getUserFromUserId(it.authorId).name}")
-                        GlobalScope.launch {
-                            val splittedText = it.text.split(' ')
-                            var cleanText = ""
-                            splittedText.forEach { text ->
-                                if ((!text.startsWith("@")) && (!text.startsWith("http"))) {
-                                    cleanText = cleanText.plus("$text ")
-                                }
-                            }
-                            if (it.attachments.mediaKeys.isNotEmpty()) {
-                                val mediaUrls = getFlippedImages(it.id)
-                                val mediaIds = getMediaIds(mediaUrls)
-                                twitter.postTweet(cleanText.reversed(), it.id, mediaIds.joinToString(","))
-                            } else {
-                                twitter.postTweet(cleanText.reversed(), it.id)
-                            }
+        println("Starting new Stream")
+        twitter.startFilteredStream {
+            if (deleteUser.contains(twitter.getUserFromUserId(it.authorId).name)) {
+                if (it.tweetType == TweetType.REPLIED_TO) {
+                    if (it.text.toLowerCase().contains("/delete")) {
+                        if (twitter.getUserFromUserName("ReversedMcYt").id.equals(it.inReplyToUserId)) {
+                            println("Delete Tweet:")
+                            println(twitter.getTweet(it.inReplyToStatusId).text)
+                            println("Because ${it.user.name} replied:")
+                            println(it.text)
+                            twitter.deleteTweet(it.inReplyToStatusId)
                         }
                     }
                 }
-            }.await()
-        }
-        delay(60 * 1000)
+            } else if (users.contains(twitter.getUserFromUserId(it.authorId).name)) {
+                if (it.tweetType != TweetType.RETWEETED) {
+                    println("${it.text} by ${twitter.getUserFromUserId(it.authorId).name}")
+                    GlobalScope.launch {
+                        val splittedText = it.text.split(' ')
+                        var cleanText = ""
+                        splittedText.forEach { text ->
+                            if ((!text.startsWith("@")) && (!text.startsWith("http"))) {
+                                cleanText = cleanText.plus("$text ")
+                            }
+                        }
+                        if (!it.attachments.mediaKeys.isNullOrEmpty()) {
+                            val mediaUrls = getFlippedImages(it.id)
+                            val mediaIds = getMediaIds(mediaUrls)
+                            twitter.postTweet(cleanText.reversed(), it.id, mediaIds.joinToString(","))
+                        } else {
+                            twitter.postTweet(cleanText.reversed(), it.id)
+                        }
+                    }
+                }
+            }
+        }.await()
+
+        // delay(Duration.Companion.seconds(60))
         startStream()
     }
 }
