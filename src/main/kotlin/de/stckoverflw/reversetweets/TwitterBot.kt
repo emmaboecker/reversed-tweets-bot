@@ -52,7 +52,6 @@ object TwitterBot {
         "Nihaachu",
         "Ph1LzA",
         "Punztw",
-        "StckOverflw"
     )
 
     /**
@@ -65,7 +64,7 @@ object TwitterBot {
         "Reversed_McYt",
         "l4zs1",
         "AmelieHuhChamp",
-
+        "StckOverflw",
     )
 
     suspend operator fun invoke() {
