@@ -65,6 +65,7 @@ object TwitterBot {
         "l4zs1",
         "AmelieHuhChamp",
         "StckOverflw",
+        "StylesTheEditor",
     )
 
     suspend operator fun invoke() {
