@@ -19,6 +19,7 @@ import kotlinx.serialization.json.add
 import kotlinx.serialization.json.buildJsonObject
 import kotlinx.serialization.json.putJsonArray
 import kotlinx.serialization.json.putJsonObject
+import java.util.*
 import java.util.concurrent.ForkJoinPool
 import java.util.concurrent.Future
 import kotlin.coroutines.resumeWithException
@@ -117,7 +118,7 @@ object TwitterBot {
         twitter.startFilteredStream {
             if (deleteUser.contains(twitter.getUserFromUserId(it.authorId).name)) {
                 if (it.tweetType == TweetType.REPLIED_TO) {
-                    if (it.text.toLowerCase().contains("/delete")) {
+                    if (it.text.lowercase(Locale.getDefault()).contains("/delete")) {
                         if (twitter.getUserFromUserName("ReversedMcYt").id.equals(it.inReplyToUserId)) {
                             println("Delete Tweet:")
                             println(twitter.getTweet(it.inReplyToStatusId).text)

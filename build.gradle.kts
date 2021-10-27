@@ -1,6 +1,6 @@
 plugins {
-    kotlin("jvm") version "1.5.21"
-    kotlin("plugin.serialization") version "1.5.21"
+    kotlin("jvm") version "1.5.31"
+    kotlin("plugin.serialization") version "1.5.31"
     application
 }
 
@@ -14,9 +14,9 @@ dependencies {
     implementation("io.ktor", "ktor-client-okhttp", "1.5.2")
     implementation("io.ktor", "ktor-client-serialization", "1.5.2")
 
-    implementation("com.google.code.gson:gson:2.8.7")
+    implementation("com.google.code.gson:gson:2.8.8")
 
-    implementation("io.github.redouane59.twitter", "twittered", "2.6")
+    implementation("io.github.redouane59.twitter", "twittered", "2.10")
 
     implementation("org.jetbrains.kotlinx", "kotlinx-datetime", "0.1.1")
 
