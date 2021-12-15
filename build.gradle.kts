@@ -1,26 +1,35 @@
 plugins {
-    kotlin("jvm") version "1.5.31"
-    kotlin("plugin.serialization") version "1.5.31"
+    kotlin("jvm") version "1.6.0"
+    kotlin("plugin.serialization") version "1.6.0"
+    id("org.jlleitschuh.gradle.ktlint") version "10.2.0"
     application
+}
+
+ktlint {
+    disabledRules.set(listOf("no-wildcard-imports"))
 }
 
 repositories {
     mavenCentral()
+    maven("https://schlaubi.jfrog.io/artifactory/envconf/")
+    maven {
+        url = uri("https://maven.pkg.jetbrains.space/public/p/ktor/eap")
+        name = "ktor-eap"
+    }
 }
 
 dependencies {
-    implementation("io.github.cdimascio", "dotenv-kotlin", "6.2.2")
+    implementation("dev.schlaubi", "envconf", "1.1")
 
     implementation("io.ktor", "ktor-client-okhttp", "1.5.2")
     implementation("io.ktor", "ktor-client-serialization", "1.5.2")
 
-    implementation("com.google.code.gson:gson:2.8.8")
+    implementation("com.google.code.gson:gson:2.8.9")
 
-    implementation("io.github.redouane59.twitter", "twittered", "2.10")
+    implementation("io.github.redouane59.twitter", "twittered", "2.13")
 
-    implementation("org.jetbrains.kotlinx", "kotlinx-datetime", "0.1.1")
-
-    implementation("org.slf4j", "slf4j-simple", "1.7.30")
+    implementation("ch.qos.logback", "logback-classic", "1.2.6")
+    implementation("io.github.microutils", "kotlin-logging", "2.0.11")
 }
 
 tasks {

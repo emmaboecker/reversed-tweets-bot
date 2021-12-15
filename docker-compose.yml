@@ -1,14 +1,19 @@
 version: "3.1"
 
 services:
+  imaginary:
+    image: h2non/imaginary:latest
+    environment:
+      PORT: 9000
+    command: -enable-url-source
+    ports:
+      - "9000:9000"
   bot:
     container_name: reversed-tweets
-    image: docker.pkg.github.com/stckoverflw/reversed-tweets-bot/twitter-bot:1.0.0
+    image: docker.pkg.github.com/stckoverflw/reversed-tweets-bot/twitter-bot
     volumes:
       - "/etc/timezone:/etc/timezone:ro"
       - "/etc/localtime:/etc/localtime:ro"
       - ./logs:/user/app/logs
     env_file:
       - .env
-    ports:
-      - 0.0.0.0:4124:80
