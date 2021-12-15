@@ -2,6 +2,7 @@ plugins {
     kotlin("jvm") version "1.6.0"
     kotlin("plugin.serialization") version "1.6.0"
     id("org.jlleitschuh.gradle.ktlint") version "10.2.0"
+    id("com.github.johnrengelman.shadow") version "7.1.0"
     application
 }
 
@@ -35,7 +36,7 @@ dependencies {
 tasks {
     withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
         kotlinOptions {
-            jvmTarget = "1.8"
+            jvmTarget = "17"
             freeCompilerArgs = freeCompilerArgs + "-Xopt-in=kotlin.RequiresOptIn"
         }
     }
@@ -43,4 +44,14 @@ tasks {
 
 application {
     mainClass.set("de.stckoverflw.reversetweets.LauncherKt")
+}
+
+tasks {
+    jar {
+        manifest {
+            attributes(
+                "Main-Class" to "net.stckoverflw.reversetweets.LauncherKt"
+            )
+        }
+    }
 }
