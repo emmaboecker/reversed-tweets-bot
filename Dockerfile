@@ -1,10 +1,10 @@
-FROM adoptopenjdk/openjdk15-openj9 as builder
+FROM eclipse-temurin:17 as builder
 
 COPY . .
 
 RUN ./gradlew --no-daemon installDist
 
-FROM adoptopenjdk/openjdk15-openj9
+FROM eclipse-temurin:17
 
 WORKDIR /user/app
 
