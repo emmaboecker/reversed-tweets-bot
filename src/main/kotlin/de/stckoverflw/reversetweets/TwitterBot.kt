@@ -12,6 +12,7 @@ import io.ktor.client.*
 import io.ktor.client.engine.okhttp.*
 import io.ktor.client.features.json.*
 import io.ktor.client.features.json.serializer.*
+
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
@@ -21,7 +22,6 @@ import java.util.*
 import java.util.concurrent.ForkJoinPool
 import java.util.concurrent.Future
 import kotlin.coroutines.resumeWithException
-import kotlin.time.ExperimentalTime
 
 private val LOG = KotlinLogging.logger { }
 
@@ -55,19 +55,15 @@ object TwitterBot {
 
         LOG.info("Starting Stream")
 
-        startStream()
-    }
-
-    @OptIn(ExperimentalTime::class)
-    private suspend fun startStream() {
         twitter.startFilteredStream { tweet ->
-            if (Config.TWITTER_DELETE_USERS.contains(tweet.user.name)) {
+            val author = twitter.getUserFromUserId(tweet.authorId)
+            if (Config.TWITTER_DELETE_USERS.contains(author.name)) {
                 if (tweet.tweetType == TweetType.REPLIED_TO) {
                     if (tweet.text.lowercase(Locale.getDefault()).contains("/delete")) {
                         if (self.id.equals(tweet.inReplyToUserId)) {
                             LOG.info("Delete Tweet:")
                             LOG.info(twitter.getTweet(tweet.inReplyToStatusId).text)
-                            LOG.info("Because ${tweet.user.name} replied:")
+                            LOG.info("Because ${author.name} replied:")
                             LOG.info(tweet.text)
                             twitter.deleteTweet(tweet.inReplyToStatusId)
                         }
@@ -75,10 +71,9 @@ object TwitterBot {
                     }
                 }
             }
-
-            if (Config.TWITTER_REPLY_USERS.contains(tweet.user?.name)) {
+            if (Config.TWITTER_REPLY_USERS.contains(author.name)) {
                 if (tweet.tweetType != TweetType.RETWEETED) {
-                    LOG.info("${tweet.text} by ${tweet.user.name}")
+                    LOG.info("${tweet.text} by ${author.name}")
                     GlobalScope.launch {
                         var cleanText = tweet.text
                             .replace("^(@\\w+ )*".toRegex(), "")

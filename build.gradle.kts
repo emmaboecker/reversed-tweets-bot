@@ -17,20 +17,28 @@ repositories {
         url = uri("https://maven.pkg.jetbrains.space/public/p/ktor/eap")
         name = "ktor-eap"
     }
+    maven {
+        url = uri("https://maven.pkg.jetbrains.space/public/p/ktor/eap")
+        name = "ktor-eap"
+    }
+    maven {
+        url = uri("https://maven.pkg.jetbrains.space/public/p/ktor/eap")
+        name = "ktor-eap"
+    }
 }
 
 dependencies {
-    implementation("dev.schlaubi", "envconf", "1.1")
+    implementation("dev.schlaubi:envconf:1.1")
 
-    implementation("io.ktor", "ktor-client-okhttp", "1.5.2")
-    implementation("io.ktor", "ktor-client-serialization", "1.5.2")
+    implementation("io.ktor:ktor-client-okhttp:1.5.2")
+    implementation("io.ktor:ktor-client-serialization:1.5.2")
 
     implementation("com.google.code.gson:gson:2.8.9")
 
-    implementation("io.github.redouane59.twitter", "twittered", "2.13")
+    implementation("io.github.redouane59.twitter:twittered:2.14")
 
-    implementation("ch.qos.logback", "logback-classic", "1.2.6")
-    implementation("io.github.microutils", "kotlin-logging", "2.0.11")
+    implementation("ch.qos.logback:logback-classic:1.2.6")
+    implementation("io.github.microutils:kotlin-logging:2.0.11")
 }
 
 tasks {
@@ -50,7 +58,7 @@ tasks {
     jar {
         manifest {
             attributes(
-                "Main-Class" to "net.stckoverflw.reversetweets.LauncherKt"
+                "Main-Class" to "de.stckoverflw.reversetweets.LauncherKt"
             )
         }
     }
