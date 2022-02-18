@@ -2,7 +2,7 @@ FROM eclipse-temurin:17 as builder
 
 COPY . .
 
-RUN ./gradlew --no-daemon installDist
+RUN chmod +x gradlew && ./gradlew --no-daemon installDist
 
 FROM eclipse-temurin:17
 

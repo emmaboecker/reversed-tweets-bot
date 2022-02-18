@@ -6,7 +6,7 @@ import io.github.redouane59.twitter.dto.tweet.MediaCategory
 import io.github.redouane59.twitter.dto.tweet.Tweet
 import java.net.URL
 
-fun Tweet.flipImages(): List<String> = if (media != null && media.any { it.type == "image" }) getMediaIds(getFlippedImages(this)) else emptyList()
+fun Tweet.flipImages(): List<String>? = if (media != null && media.any { it.type == "photo" }) getMediaIds(getFlippedImages(this)) else null
 
 private fun getFlippedImages(tweet: Tweet): List<String> =
     tweet.media.map { it.mediaUrl }.map { Config.IMAGINARY_URL + "/flip?url=" + it }

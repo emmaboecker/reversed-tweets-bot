@@ -81,11 +81,13 @@ object TwitterBot {
                             cleanText = cleanText.replace(it.url, "")
                         }
 
+                        val flippedImages = tweet.flipImages()
+
                         val tweetBuilder = TweetParameters.builder()
                             .reply(TweetParameters.Reply.builder().inReplyToTweetId(tweet.id).build())
                             .text(cleanText.reversed())
-                        if (!tweet.media.isNullOrEmpty()) {
-                            tweetBuilder.media(TweetParameters.Media.builder().mediaIds(tweet.flipImages()).build())
+                        if (flippedImages != null) {
+                            tweetBuilder.media(TweetParameters.Media.builder().mediaIds(flippedImages).build())
                         }
                         twitter.postTweet(tweetBuilder.build())
                     }
