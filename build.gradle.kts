@@ -1,6 +1,6 @@
 plugins {
-    kotlin("jvm") version "1.6.0"
-    kotlin("plugin.serialization") version "1.6.0"
+    kotlin("jvm") version "1.6.10"
+    kotlin("plugin.serialization") version "1.6.10"
     id("org.jlleitschuh.gradle.ktlint") version "10.2.0"
     id("com.github.johnrengelman.shadow") version "7.1.0"
     application
@@ -30,15 +30,15 @@ repositories {
 dependencies {
     implementation("dev.schlaubi:envconf:1.1")
 
-    implementation("io.ktor:ktor-client-okhttp:1.5.2")
-    implementation("io.ktor:ktor-client-serialization:1.5.2")
+    implementation("io.ktor:ktor-client-okhttp:1.6.7")
+    implementation("io.ktor:ktor-client-serialization:1.6.7")
 
-    implementation("com.google.code.gson:gson:2.8.9")
+    implementation("com.google.code.gson:gson:2.9.0")
 
-    implementation("io.github.redouane59.twitter:twittered:2.14")
+    implementation("io.github.redouane59.twitter:twittered:2.15")
 
-    implementation("ch.qos.logback:logback-classic:1.2.6")
-    implementation("io.github.microutils:kotlin-logging:2.0.11")
+    implementation("ch.qos.logback:logback-classic:1.2.10")
+    implementation("io.github.microutils:kotlin-logging:2.1.21")
 }
 
 tasks {
