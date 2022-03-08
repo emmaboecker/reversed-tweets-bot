@@ -50,8 +50,8 @@ object TwitterBot : CoroutineScope {
             self = twitter.getUserFromUserName("me")
             setUpFilteredStreamRules()
             LOG.info("Starting Stream")
-            try {
-                twitter.startFilteredStream { tweet ->
+            twitter.startFilteredStream { tweet ->
+                try {
                     val author = twitter.getUserFromUserId(tweet.authorId)
                     if (Config.TWITTER_DELETE_USERS.contains(author.name)) {
                         if (tweet.tweetType == TweetType.REPLIED_TO) {
@@ -89,12 +89,13 @@ object TwitterBot : CoroutineScope {
                             }
                         }
                     }
-                }.await()
-            } catch (ex: Exception) {
-                LOG.error {
-                    "Catched an Error: \nMessage: ${ex.message} \nStacktrace: ${ex.stackTrace}"
+                } catch (ex: Exception) {
+                    LOG.error {
+                        "Catched an Error: \nMessage: ${ex.message} \nStacktrace: ${ex.stackTrace}"
+                    }
                 }
-            }
+            }.await()
+
         }
     }
 }
