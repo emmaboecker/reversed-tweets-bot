@@ -7,13 +7,12 @@ import de.stckoverflw.reversetweets.twitter.setUpFilteredStreamRules
 import io.github.redouane59.twitter.TwitterClient
 import io.github.redouane59.twitter.dto.tweet.TweetParameters
 import io.github.redouane59.twitter.dto.tweet.TweetType
-import io.github.redouane59.twitter.dto.user.UserV2
+import io.github.redouane59.twitter.dto.user.User
 import io.ktor.client.*
 import io.ktor.client.engine.okhttp.*
 import io.ktor.client.features.json.*
 import io.ktor.client.features.json.serializer.*
 import kotlinx.coroutines.*
-
 import mu.KotlinLogging
 import java.util.*
 import java.util.concurrent.ForkJoinPool
@@ -30,7 +29,7 @@ object TwitterBot : CoroutineScope {
     lateinit var twitter: TwitterClient
     lateinit var client: HttpClient
 
-    lateinit var self: UserV2
+    lateinit var self: User
 
     suspend operator fun invoke() {
         coroutineScope {
@@ -47,7 +46,7 @@ object TwitterBot : CoroutineScope {
                     serializer = KotlinxSerializer()
                 }
             }
-            self = twitter.getUserFromUserName("me")
+            self = twitter.getUserFromUserId(twitter.userIdFromAccessToken)
             setUpFilteredStreamRules()
             LOG.info("Starting Stream")
             twitter.startFilteredStream { tweet ->
